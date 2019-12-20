@@ -1,0 +1,13 @@
+data:
+  random_state: 42
+  test_size: 0.3
+
+io:
+  datalake_url: adl://haaldatalake.azuredatalakestore.net
+  model_persistent_path: /Users/chjin/Downloads/
+  mlflow_experiment_name: "autoML"
+  mlflow_tracking_uri: "http://0.0.0.0:5000"
+
+params:
+  top_k_features: 10 # auto
+  param_grid:  {"adaboostregressor__n_estimators": [50, 100], "adaboostregressor__learning_rate": [0.1, 1.0]}

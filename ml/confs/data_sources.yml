@@ -1,0 +1,55 @@
+data_sources:
+  article_datamart:
+    columns:
+      - article_id
+      - gross_price
+      - planning_market_id
+      - product_season_id
+      - index_id
+      - subindex_id
+      - department_id
+      - product_type_id
+    # source: datalake
+    # location: /HDL/PROD/DMA/ALLO_ORDER_DATAMART
+    # extension: parquet 
+    source: local 
+    location: /Users/chjin/Downloads/allo_datamart.csv
+    extension: csv 
+
+  dummy_datamart:
+    columns:
+      - article_id
+      - is_dummy 
+    source: local
+    # location: /use_cases/allo/CHENGJUN/mip/dummy.csv 
+    location: /Users/chjin/Downloads/dummy.csv 
+    extension: csv
+
+  clf_datamart:
+    columns:
+      - x1
+      - x2
+      - x3
+      - x4
+      - y
+    source: local
+    location: /Users/chjin/Downloads/raw_data.csv 
+    extension: csv
+
+  bigmart_datamart:
+    columns:
+      - Item_Identifier
+      - Item_Weight
+      - Item_Fat_Content
+      - Item_Visibility
+      - Item_Type
+      - Item_MRP
+      - Outlet_Identifier
+      - Outlet_Establishment_Year
+      - Outlet_Size
+      - Outlet_Location_Type
+      - Outlet_Type
+      - Item_Outlet_Sales
+    source: local
+    location: /Users/chjin/Downloads/bigmart.csv 
+    extension: csv
