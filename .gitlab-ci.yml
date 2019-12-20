@@ -1,0 +1,78 @@
+stages: 
+  - build 
+  - test
+  - release
+  - deploy 
+
+default:
+  image: docker:latest
+  services:
+    - docker:dind
+  
+  before_script:
+    - docker login registry.gitlab.com -u $CI_REGISTRY_USER -p $CI_BUILD_TOKEN 
+
+pre:
+  stage: .pre 
+  script:
+    - echo "Pre stage:"
+    # - export
+
+build_image:
+  stage: build
+  script:
+    # 1. clean 2. pull 3. build 4. tag 5 push
+    - echo "Build docker image:"
+    - docker system prune -af
+    - docker build . --pull -f Dockerfile -t $CI_REGISTRY_IMAGE:$CI_BUILD_REF
+    - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF 
+
+unit_test:
+  stage: test 
+  script:
+    - echo "Unit test:"
+
+integration_test:
+  stage: test 
+  script:
+    - echo "integration test:"
+
+release_master:
+  stage: release
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_BUILD_REF
+    - docker tag $CI_REGISTRY_IMAGE:$CI_BUILD_REF $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest
+  only:
+    - master
+
+.gcloud: &gcloud
+  - echo $GCLOUD_SERVICE_KEY > ~/gcloud-service-key.json
+  - gcloud auth activate-service-account --key-file ~/gcloud-service-key.json
+
+.prod_deploy: &prod_deploy
+  image: google/cloud-sdk:slim
+  stage: deploy 
+  environment: production
+  before_script: *gcloud
+  script:
+    - echo "production deploy"
+    # - kubectl patch
+  after_script:
+    - rm ~/gcloud-service-key.json
+
+auto_deploy:
+  <<: *prod_deploy
+  only:
+    - master 
+
+manual_deploy:
+  <<: *prod_deploy
+  when: manual
+  only:
+    - master 
+
+post:
+  stage: .post 
+  script:
+    - echo "Post:"

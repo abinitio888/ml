@@ -1,0 +1,33 @@
+data_sources:
+  # article_datamart:
+  #   columns:
+  #     - article_id
+  #     - gross_price
+  #     - planning_market_id
+  #     - product_season_id
+  #     - index_id
+  #     - subindex_id
+  #     - department_id
+  #     - product_type_id
+  #   source: hdl 
+  #   location: /HDL/PROD/DMA/
+  #   extension: parquet 
+
+  bigmart_datamart:
+    columns:
+      - scenario_id
+      - Item_Identifier
+      - Item_Weight
+      - Item_Fat_Content
+      - Item_Visibility
+      - Item_Type
+      - Item_MRP
+      - Outlet_Identifier
+      - Outlet_Establishment_Year
+      - Outlet_Size
+      - Outlet_Location_Type
+      - Outlet_Type
+      - Item_Outlet_Sales
+    source: local
+    location: /Users/chjin/repos/ml/sample_data/bigmart.csv 
+    extension: csv

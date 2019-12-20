@@ -1,0 +1,34 @@
+io:
+  # datalake_url: adl://haaldatalake.azuredatalakestore.net
+  # train_data_path: /use_cases/allo/allo_df/data/train 
+  # predict_data_path: /use_cases/allo/allo_df/data/predict
+  datalake_url: /Users 
+  train_data_path: /chjin/Downloads/data/train 
+  predict_data_path: /chjin/Downloads/data/predict
+  model_persistent_path: /Users/chjin/Downloads
+
+featuretools:
+  on: True
+
+  features:
+  - feature_1
+  - feature_2
+  - feature_3
+  - feature_4
+
+target:
+  - target_1
+
+mlflow:
+  mlflow_experiment_name: "autoML"
+  mlflow_tracking_uri: "http://0.0.0.0:5000"
+
+
+train:
+  randomn_state: 42
+  test_size: 0.3
+  model_params:
+    top_k_features: 10 # auto
+    param_grid:  {"adaboostregressor__n_estimators": [50, 100], "adaboostregressor__learning_rate": [0.1, 1.0]}
+
+predict:
