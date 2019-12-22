@@ -10,7 +10,7 @@ from ml.data.data import Data
 from ml.helper.config import Config
 
 
-class PipeLine:
+class Pipeline:
     def __init__(self, config: Config, data: Data):
         self.config = config
         self.data = data
@@ -33,3 +33,13 @@ class PipeLine:
 
         results = grid_search.fit(self.X, self.y)
         return results
+    
+if __name__ == "__main__":
+    from ml.helper.spark_io import SparkReader
+
+    config = Config("./ml/confs/").config
+    spark_reader = SparkReader(config)
+    data = Data(config, spark_reader)
+    pipeline = Pipeline(config, data)
+    breakpoint()
+

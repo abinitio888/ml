@@ -23,4 +23,4 @@ data_sources:
     source: local
     # location: /use_cases/allo/CHENGJUN/mip/dummy.csv 
     location: /Users/chjin/Downloads/dummy.csv 
-    extension: cs
+    extension: csv
