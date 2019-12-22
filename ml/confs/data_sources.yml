@@ -1,0 +1,26 @@
+data_sources:
+  article_datamart:
+    columns:
+      - article_id
+      - gross_price
+      - planning_market_id
+      - product_season_id
+      - index_id
+      - subindex_id
+      - department_id
+      - product_type_id
+    # source: datalake
+    # location: /HDL/PROD/DMA/ALLO_ORDER_DATAMART
+    # extension: parquet 
+    source: local 
+    location: /Users/chjin/Downloads/allo_datamart.csv
+    extension: csv 
+
+  dummy_datamart:
+    columns:
+      - article_id
+      - is_dummy 
+    source: local
+    # location: /use_cases/allo/CHENGJUN/mip/dummy.csv 
+    location: /Users/chjin/Downloads/dummy.csv 
+    extension: cs
