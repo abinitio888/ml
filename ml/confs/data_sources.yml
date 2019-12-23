@@ -24,3 +24,14 @@ data_sources:
     # location: /use_cases/allo/CHENGJUN/mip/dummy.csv 
     location: /Users/chjin/Downloads/dummy.csv 
     extension: csv
+
+  clf_datamart:
+    columns:
+      - x1
+      - x2
+      - x3
+      - x4
+      - y
+    source: local
+    location: /Users/chjin/Downloads/raw_data.csv 
+    extension: csv

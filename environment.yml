@@ -16,3 +16,4 @@ dependencies:
   - scikit-learn
   - pip:
     - docker==3.7.1
+    - joblib
