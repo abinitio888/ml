@@ -4,12 +4,15 @@ import pyspark.sql as ps
 import logging
 from typing import Set
 from cached_property import cached_property
+import featuretools as ft
 
 from sklearn.model_selection import train_test_split
 
 from ml.data.data_streams import DataStreams
 from ml.helper.config import Config
 from ml.helper.spark_io import SparkReader
+
+# refactor the featuretools code to make it more general
 
 
 class Data:
@@ -39,24 +42,63 @@ class Data:
         df = self.clf_datamart.df
         return df
 
-    def tab_2(self):
+    @cached_property
+    def _df_bigmart(self):
+        # spark --> spark
+        df = self.bigmart_datamart.df
+        return df
+
+    def tab_tmp(self):
         # spark --> spark
         pass
 
     def _get_raw_data(self) -> pd.DataFrame:
         # spark --> pd
-        # feature engineering
-        raw_data = self._df_clf
+        # table manipulation to suit the feature engineer
+        raw_data = self._df_bigmart
 
         raw_data = raw_data.toPandas()
+        raw_data["id"] = raw_data["Item_Identifier"] + raw_data["Outlet_Identifier"]
+        raw_data.drop(["Item_Identifier"], axis=1, inplace=True)
+        return raw_data
 
-        X = raw_data.loc[:, ["x1", "x2", "x3", "x4"]]
-        y = raw_data.loc[:, "y"]
-        return X, y
+    def _construct_entity_set(self):
+        raw_data = self._get_raw_data()
+
+        es = ft.EntitySet(id="sales")
+        es.entity_from_dataframe(entity_id="bigmart", dataframe=raw_data, index="id")
+
+        es.normalize_entity(
+            base_entity_id="bigmart",
+            new_entity_id="outlet",
+            index="Outlet_Identifier",
+            additional_variable=[
+                "Outlet_Establishment_Year",
+                "Outlet_Size",
+                "Outlet_Location_Type",
+                "Outlet_Type",
+            ],
+        )
+
+    def _get_feature_matrix(self):
+        es = self._construct_entity_set()
+        feature_matrix, feature_defs = ft.dfs(
+            entityset=es, target_entity="bigmart", max_depth=2, verbose=1, n_jobs=1
+        )
+
+        feature_matrix.drop(["Outlet_Identifier"], axis=1, inplace=True)
+
+        return feature_matrix
+
+    def _get_target(self):
+        y = self._get_raw_data["Item_Outlet_Sales"]
+        return y
 
     @cached_property
     def train_test_data(self) -> tuple:
-        X, y = self._get_raw_data()
+        # TODO: check the sorting X and y
+        X = self._get_feature_matrix()
+        y = self._get_target()
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=self.test_size, random_state=self.random_state
         )

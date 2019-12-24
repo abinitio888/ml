@@ -35,3 +35,21 @@ data_sources:
     source: local
     location: /Users/chjin/Downloads/raw_data.csv 
     extension: csv
+
+  bigmart_datamart:
+    columns:
+      - Item_Identifier
+      - Item_Weight
+      - Item_Fat_Content
+      - Item_Visibility
+      - Item_Type
+      - Item_MRP
+      - Outlet_Identifier
+      - Outlet_Establishment_Year
+      - Outlet_Size
+      - Outlet_Location_Type
+      - Outlet_Type
+      - Item_Outlet_Sales
+    source: local
+    location: /Users/chjin/Downloads/bigmart.csv 
+    extension: csv
