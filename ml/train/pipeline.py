@@ -8,7 +8,8 @@ from sklearn.decomposition import PCA
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import make_pipeline
 from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostRegressor
+from sklearn.preprocessing import OneHotEncoder
 
 
 from ml.data.data import Data
@@ -29,10 +30,12 @@ class Pipeline:
         self.X, self.y = self.data.train_data
         self.model_persistent_path = self.config["io"]["model_persistent_path"]
 
+
     def _make_pipeline(self):
         self.logger.info("Making the pipeline...")
         cachedir = mkdtemp()
-        pipeline = make_pipeline(RandomForestClassifier(), memory=cachedir)
+        pipeline = make_pipeline(OneHotEncoder(), AdaBoostRegressor(), memory=cachedir)
+        # pipeline = make_pipeline(RandomForestClassifier(), memory=cachedir)
         return pipeline
 
     # # TODO
@@ -78,3 +81,5 @@ if __name__ == "__main__":
     data = Data(config, spark_reader)
     pipeline = Pipeline(config, data)
     pipeline.run()
+    print(pipeline.feature_importances)
+

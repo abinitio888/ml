@@ -5,6 +5,7 @@ import logging
 from typing import Set
 from cached_property import cached_property
 import featuretools as ft
+import numpy as np
 
 from sklearn.model_selection import train_test_split
 
@@ -53,16 +54,27 @@ class Data:
         pass
 
     def _get_raw_data(self) -> pd.DataFrame:
+        """
+        This is the feature table for model training, if featuretools is not used.
+        """
         # spark --> pd
         # table manipulation to suit the feature engineer
         raw_data = self._df_bigmart
 
         raw_data = raw_data.toPandas()
+        
+        # fat_content_dict = {'Low Fat':0, 'Regular':1, 'LF':0, 'reg':1, 'low fat':0}
+        # raw_data['Item_Fat_Content'] = raw_data['Item_Fat_Content'].replace(fat_content_dict, regex=True)
+
         raw_data["id"] = raw_data["Item_Identifier"] + raw_data["Outlet_Identifier"]
         raw_data.drop(["Item_Identifier"], axis=1, inplace=True)
+        raw_data = raw_data.dropna(axis=0)
         return raw_data
 
     def _construct_entity_set(self):
+        """
+        Construct and dump the EntitySet
+        """
         raw_data = self._get_raw_data()
 
         es = ft.EntitySet(id="sales")
@@ -72,7 +84,7 @@ class Data:
             base_entity_id="bigmart",
             new_entity_id="outlet",
             index="Outlet_Identifier",
-            additional_variable=[
+            additional_variables=[
                 "Outlet_Establishment_Year",
                 "Outlet_Size",
                 "Outlet_Location_Type",
@@ -80,25 +92,43 @@ class Data:
             ],
         )
 
-    def _get_feature_matrix(self):
+        # TODO: dump the es file for future featuretools
+        print(es)
+        return es
+
+    @cached_property
+    def _feature_matrix(self):
+        """
+        Use `featuretools` to generate the `feature_matrix` and
+        format the feature matrix according to the model
+        """
         es = self._construct_entity_set()
         feature_matrix, feature_defs = ft.dfs(
             entityset=es, target_entity="bigmart", max_depth=2, verbose=1, n_jobs=1
         )
 
+        # TODO: move to the pipeline in the future.
+        new_feature_matrix = self._format_feature_matrix(feature_matrix)
+        return new_feature_matrix
+
+    def _format_feature_matrix(self, feature_matrix):
+        # categorical_features = np.where(feature_matrix.dtypes == 'object')[0]
+        # for i in categorical_features:
+        #     feature_matrix.iloc[:,i] = feature_matrix.iloc[:,i].astype('str')
         feature_matrix.drop(["Outlet_Identifier"], axis=1, inplace=True)
 
         return feature_matrix
 
-    def _get_target(self):
-        y = self._get_raw_data["Item_Outlet_Sales"]
+    @cached_property
+    def _target(self):
+        y = self._get_raw_data()["Item_Outlet_Sales"]
         return y
 
     @cached_property
     def train_test_data(self) -> tuple:
         # TODO: check the sorting X and y
-        X = self._get_feature_matrix()
-        y = self._get_target()
+        X = self._feature_matrix
+        y = self._target
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=self.test_size, random_state=self.random_state
         )
@@ -121,3 +151,5 @@ if __name__ == "__main__":
     print(data.train_data[1].shape)
     print(data.test_data[0].shape)
     print(data.test_data[1].shape)
+    print(data.train_data[0].columns)
+    print(data.train_data[0].head())

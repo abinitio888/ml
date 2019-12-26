@@ -17,3 +17,4 @@ dependencies:
   - pip:
     - docker==3.7.1
     - joblib
+    - featuretools
