@@ -62,7 +62,7 @@ class Data:
         raw_data = self._df_bigmart
 
         raw_data = raw_data.toPandas()
-        
+
         # fat_content_dict = {'Low Fat':0, 'Regular':1, 'LF':0, 'reg':1, 'low fat':0}
         # raw_data['Item_Fat_Content'] = raw_data['Item_Fat_Content'].replace(fat_content_dict, regex=True)
 
@@ -129,6 +129,7 @@ class Data:
         # TODO: check the sorting X and y
         X = self._feature_matrix
         y = self._target
+        assert X.shape[0] == y.shape[0]  # use raise instead
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=self.test_size, random_state=self.random_state
         )

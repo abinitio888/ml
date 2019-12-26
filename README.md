@@ -4,6 +4,7 @@
 `conda env create ml -f environment.yml`
 
 ## TODO:
+<!-- - featuretools -->
 - auto feature selection
 - auto hyper param tuning
 - CI on git-lab with Jenkes

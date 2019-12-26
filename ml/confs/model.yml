@@ -5,3 +5,6 @@ data:
 io:
   datalake_url: adl://haaldatalake.azuredatalakestore.net
   model_persistent_path: /Users/chjin/Downloads/
+
+params:
+  top_k_features: auto # auto

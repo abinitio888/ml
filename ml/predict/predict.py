@@ -17,6 +17,7 @@ class Predict:
 
         self.X, self.y = self.data.test_data
         self.model_persistent_path = self.config["io"]["model_persistent_path"]
+        breakpoint()
 
         self.pipeline = self._load_pipeline()
 
