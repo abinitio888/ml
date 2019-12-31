@@ -38,7 +38,6 @@ class Pipeline:
         self.logger.info("Making the pipeline...")
         cachedir = mkdtemp()
         pipeline = make_pipeline(OneHotEncoder(), AdaBoostRegressor(), memory=cachedir)
-        # pipeline = make_pipeline(RandomForestClassifier(), memory=cachedir)
         return pipeline
 
     def _select_features(self) -> List:
@@ -53,7 +52,6 @@ class Pipeline:
             features = self.X.columns.to_list()[-self.top_k_features :]
         return features
 
-    # # TODO
     def _tune_hyperparams(self, features=None):
         self.logger.info("Tuning the pipeline...")
         grid_search = GridSearchCV(self.pipeline, self.param_grid)
