@@ -3,6 +3,8 @@ from tempfile import mkdtemp
 from cached_property import cached_property
 from joblib import dump, load
 import logging
+from typing import List
+import numpy as np
 
 from sklearn.decomposition import PCA
 from sklearn.model_selection import GridSearchCV
@@ -30,6 +32,7 @@ class Pipeline:
         self.X, self.y = self.data.train_data
         self.model_persistent_path = self.config["io"]["model_persistent_path"]
         self.top_k_features = self.config["params"]["top_k_features"]
+        self.param_grid = self.config["params"]["param_grid"]
 
     def _make_pipeline(self):
         self.logger.info("Making the pipeline...")
@@ -39,34 +42,24 @@ class Pipeline:
         return pipeline
 
     def _select_features(self) -> List:
-        self.logger.info("Selecting the features...")
+        self.logger.info("One-shot fiting and selecting the features...")
         self.pipeline.fit(self.X, self.y)
         if self.top_k_features == "auto":
             # TODO:
             # add up fi to 1
             pass
         elif type(self.top_k_features) == int:
-            features = self._feature_importances.sort()[: self.top_k_features]
+            sorted_fi, sorted_idx = self._feature_importances
+            features = self.X.columns.to_list()[-self.top_k_features :]
         return features
 
     # # TODO
     def _tune_hyperparams(self, features=None):
         self.logger.info("Tuning the pipeline...")
-        pass
-
-    #     param_grid = dict()
-    #     grid_search = GridSearchCV(self.pipeline, param_grid)
-    #     return grid_search
-    # grid_search = self._tune_hyperparam()
-    # results = grid_search.fit(self.X, self.y)
-    # return results
-
-    def _fit(self, features=None):
-        self.logger.info("Fiting the pipeline...")
-        if features is None:
-            self.pipeline.fit(self.X, self.y)
-        else:
-            self.pipeline.fit(self.X[[features]], self.y)
+        grid_search = GridSearchCV(self.pipeline, self.param_grid)
+        grid_search.fit(self.X[features], self.y)
+        best_estimator = grid_search.best_estimator_
+        return best_estimator
 
     def _dump_pipeline(self):
         self.logger.info("Dumping the pipeline...")
@@ -76,16 +69,18 @@ class Pipeline:
     def run(self):
         self.logger.info("Ready to run the pipeline:")
         self.pipeline = self._make_pipeline()
-        features = self._select_features()
-        self._fit(features=features)
-        # self._tune_hyperparams()
+        selected_features = self._select_features()
+        self._tune_hyperparams(features=selected_features)
         self._dump_pipeline()
 
     @cached_property
     def _feature_importances(self):
         # TO_FIX: -1 is hard-coded
+        # use the robust decrease in accuracy instead
         fi = self.pipeline[-1].feature_importances_
-        return fi
+        sorted_idx = np.argsort(fi)
+        sorted_fi = fi[sorted_idx]
+        return sorted_fi, sorted_idx
 
 
 if __name__ == "__main__":
@@ -96,4 +91,4 @@ if __name__ == "__main__":
     data = Data(config, spark_reader)
     pipeline = Pipeline(config, data)
     pipeline.run()
-    print(pipeline._feature_importances)
+    print("test pass")
