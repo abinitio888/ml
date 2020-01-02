@@ -6,6 +6,7 @@ stages:
   - integration test 
  
 before_script:
+  - sudo apt-get install libevent-dev
   - conda env create ml -f environment.yml
   - conda activate ml
 
