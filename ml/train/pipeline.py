@@ -1,18 +1,17 @@
-from shutil import rmtree
-from tempfile import mkdtemp
 from cached_property import cached_property
 from joblib import dump, load
-import logging
+from shutil import rmtree
+from tempfile import mkdtemp
 from typing import List
+import logging
 import numpy as np
 
 from sklearn.decomposition import PCA
+from sklearn.ensemble import RandomForestClassifier, AdaBoostRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import make_pipeline
-from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier, AdaBoostRegressor
 from sklearn.preprocessing import OneHotEncoder
-
+from sklearn.svm import SVC
 
 from ml.data.data import Data
 from ml.helper.config import Config
@@ -64,13 +63,6 @@ class Pipeline:
         # TODO: pathlib and timestamp
         dump(self.pipeline, self.model_persistent_path + "pipeline.joblib")
 
-    def run(self):
-        self.logger.info("Ready to run the pipeline:")
-        self.pipeline = self._make_pipeline()
-        selected_features = self._select_features()
-        self._tune_hyperparams(features=selected_features)
-        self._dump_pipeline()
-
     @cached_property
     def _feature_importances(self):
         # TO_FIX: -1 is hard-coded
@@ -79,6 +71,14 @@ class Pipeline:
         sorted_idx = np.argsort(fi)
         sorted_fi = fi[sorted_idx]
         return sorted_fi, sorted_idx
+
+    def run(self):
+        self.logger.info("Ready to run the pipeline:")
+        self.pipeline = self._make_pipeline()
+        selected_features = self._select_features()
+        self._tune_hyperparams(features=selected_features)
+        self._dump_pipeline()
+        self.logger.info("The pipeline is finished")
 
 
 if __name__ == "__main__":

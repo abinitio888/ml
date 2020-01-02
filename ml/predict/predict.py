@@ -1,7 +1,8 @@
 from joblib import load
+import logging
+
 from ml.data.data import Data
 from ml.helper.config import Config
-import logging
 
 
 class Predict:

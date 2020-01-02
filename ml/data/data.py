@@ -1,11 +1,10 @@
+from cached_property import cached_property
+from typing import Set
+import featuretools as ft
+import logging
+import numpy as np
 import pandas as pd
 import pyspark.sql as ps
-
-import logging
-from typing import Set
-from cached_property import cached_property
-import featuretools as ft
-import numpy as np
 
 from sklearn.model_selection import train_test_split
 
