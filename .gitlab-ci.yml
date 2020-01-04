@@ -1,26 +1,35 @@
-image: continuumio/miniconda3:4.7.12
-
 stages: 
-  - build
-  - unit test
-  - integration test 
- 
-before_script:
-  - sudo apt-get install libevent-dev
-  - conda env create ml -f environment.yml
-  - conda activate ml
+  - build_image
+  - unit_test
+  - integration_test 
 
-build:
-  stage: build
+default:
+  image: continuumio/miniconda3:4.7.12
+
+  before_script:
+    - sudo apt-get install libevent-dev
+    - conda env create ml -f environment.yml
+    - conda activate ml
+
+develop:
+  stage: .pre 
+  script:
+    - echo "pre"
+
+  stage: build_image
   script:
     - echo "Build docker image"
 
-unit_test:
-  stage: unit test 
+  stage: unit_test 
   script:
     - echo "Unit test"
 
-integration_test:
-  stage: integration test 
+  stage: integration_test 
   script:
     - echo "integration test"
+
+  stage: .post 
+  script:
+    - echo "post"
+
+# production:
