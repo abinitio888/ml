@@ -10,39 +10,27 @@ Pre:
   stage: .pre 
   script:
     - echo "Pre stage:"
-    - apt-get update 
-    - apt-get -y install build-essential
-    - conda update -n base -c defaults conda
-    - conda env create ml -f environment.yml
-    - conda clean -a
-    - source activate ml
-    - conda env list 
     - echo $CONDA_DEFAULT_ENV 
 
 Build image:
   stage: build image
   script:
     - echo "Build docker image"
-    - conda env list 
-    - echo $CONDA_DEFAULT_ENV 
+    - docker build . -f Dockerfile -t ml_dev 
 
 Unit test:
   stage: unit test 
   script:
     - echo "Unit test"
-    - conda env list 
-    - echo $CONDA_DEFAULT_ENV 
+    - echo $CONDA_DEFAULT_ENV
 
 Integration test:
   stage: integration test 
   script:
     - echo "integration test"
-    - conda env list 
-    - echo $CONDA_DEFAULT_ENV 
+    - echo $CONDA_DEFAULT_ENV
 
 Post:
   stage: .post 
   script:
     - echo "post"
-    - conda env list 
-    - echo $CONDA_DEFAULT_ENV 

@@ -1,19 +1,13 @@
 FROM continuumio/miniconda3:4.7.12
 
-# ENV HOME /app
+RUN apt-get update && apt-get -y install build-essential
 
-# # ENV GRB_LICENSE_FILE=/gurobi.lic
-# COPY environment.yml /environment.yml
+ENV HOME /app
+WORKDIR $HOME
+# Copy the repo to $HOME
+COPY . $HOME  
 
-# RUN conda env create mip -f /environment.yml && conda clean -a
-# RUN conda  env update conda -f environment.yml
+RUN conda env create ml -f environment.yml && conda clean -a
+ENV PATH=/opt/conda/envs/ml/bin:$PATH
 
-# ENV PATH=/opt/conda/envs/r3/bin:$PATH
-
-# WORKDIR $HOME
-
-# # Set up working directory
-# #Add repository content to working directory
-# COPY . $HOME
-
-# RUN echo "source activate ml" > ~/.bashrc
+RUN echo "source activate ml" > ~/.bashrc
