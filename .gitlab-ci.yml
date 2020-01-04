@@ -7,7 +7,7 @@ default:
   image: continuumio/miniconda3:4.7.12
 
   before_script:
-    - sudo apt-get install libevent-dev
+    # - sudo apt-get install libevent-dev
     - conda env create ml -f environment.yml
     - conda activate ml
 
@@ -35,5 +35,3 @@ Post:
   stage: .post 
   script:
     - echo "post"
-
-# production:
