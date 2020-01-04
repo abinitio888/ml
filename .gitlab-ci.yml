@@ -7,7 +7,8 @@ default:
   image: continuumio/miniconda3:4.7.12
 
   before_script:
-    # - sudo apt-get install libevent-dev
+    - apt-get update 
+    - apt-get install build-essential
     - conda env create ml -f environment.yml
     - conda activate ml
 
