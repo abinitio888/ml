@@ -11,23 +11,27 @@ default:
     - conda env create ml -f environment.yml
     - conda activate ml
 
-develop:
+Pre:
   stage: .pre 
   script:
     - echo "pre"
 
+Build image:
   stage: build_image
   script:
     - echo "Build docker image"
 
+Unit test:
   stage: unit_test 
   script:
     - echo "Unit test"
 
+Integration test:
   stage: integration_test 
   script:
     - echo "integration test"
 
+Post:
   stage: .post 
   script:
     - echo "post"
