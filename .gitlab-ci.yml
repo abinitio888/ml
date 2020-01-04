@@ -11,14 +11,14 @@ default:
     - apt-get -y install build-essential
     - conda update -n base -c defaults conda
     - conda env create ml -f environment.yml
-    - conda init bash
-    - conda activate ml
-    # - conda clean -a
+    # - conda init bash
+    - conda clean -a
 
 Pre:
   stage: .pre 
   script:
     - echo "pre"
+    - conda activate ml
 
 Build image:
   stage: build image
