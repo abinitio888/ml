@@ -1,7 +1,7 @@
 stages: 
-  - build_image
-  - unit_test
-  - integration_test 
+  - build image
+  - unit test
+  - integration test 
 
 default:
   image: continuumio/miniconda3:4.7.12
@@ -17,17 +17,17 @@ Pre:
     - echo "pre"
 
 Build image:
-  stage: build_image
+  stage: build image
   script:
     - echo "Build docker image"
 
 Unit test:
-  stage: unit_test 
+  stage: unit test 
   script:
     - echo "Unit test"
 
 Integration test:
-  stage: integration_test 
+  stage: integration test 
   script:
     - echo "integration test"
 
