@@ -4,8 +4,9 @@ stages:
   - integration test 
 
 default:
+  image: docker:latest
   # image: alpine:3.11
-  image: continuumio/miniconda3:4.7.12
+  # image: continuumio/miniconda3:4.7.12
 
 Pre:
   stage: .pre 
