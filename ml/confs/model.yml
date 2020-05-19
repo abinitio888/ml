@@ -11,6 +11,9 @@ mlflow:
   mlflow_experiment_name: "autoML"
   mlflow_tracking_uri: "http://0.0.0.0:5000"
 
+featuretools:
+  on: True
+
 train:
   random_state: 42
   test_size: 0.3

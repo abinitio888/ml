@@ -15,6 +15,7 @@ data_sources:
 
   bigmart_datamart:
     columns:
+      - scenario_id
       - Item_Identifier
       - Item_Weight
       - Item_Fat_Content

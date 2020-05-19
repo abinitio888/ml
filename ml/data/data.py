@@ -34,7 +34,7 @@ class Data:
         return df
 
     @cached_property
-    def get_master_df(self) -> DataFrame:
+    def master_df(self) -> DataFrame:
         """
         Master dataframe, where dataframe operations happen.
         """
@@ -54,6 +54,7 @@ if __name__ == "__main__":
     config = Config("./ml/confs/").config
     spark_reader = SparkReader(config)
     data = Data(config, spark_reader, train=True)
-    df = data.get_master_df
+    df = data.master_df
     df.printSchema()
+    df.groupBy("scenario_id").count().show()
     print("test passed!")
