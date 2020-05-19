@@ -34,7 +34,7 @@ class SparkReader(Spark):
     def read(self, stream_name, columns, source, extension, location):
         if source == "local":
             location == location
-        elif source == "datalake":
+        elif source == "hdl":
             location = self.datalake_url + location
 
         if extension == "csv":

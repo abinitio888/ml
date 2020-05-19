@@ -5,6 +5,7 @@ from tempfile import mkdtemp
 from typing import List
 import logging
 import numpy as np
+import pandas as pd
 
 from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestClassifier, AdaBoostRegressor
@@ -22,14 +23,16 @@ from ml.helper.config import Config
 
 class Pipeline:
     """
-    >>> pipeline = Pipeline(config, data) 
-    >>> pipeline.run()
+    >>> pipeline = Pipeline(config, df) 
+    >>> pipeline.train()
+    or 
+    >>> pipeline.predict()
     """
 
-    def __init__(self, config: Config, data: Data):
+    def __init__(self, config: Config, df: pd.DataFrame):
         self.logger = logging.getLogger(__name__)
         self.config = config
-        self.data = data
+        self.df = df 
 
         self.X, self.y = self.data.train_data
         self.top_k_features = self.config["params"]["top_k_features"]
@@ -96,7 +99,7 @@ class Pipeline:
         sorted_fi = fi[sorted_idx]
         return sorted_fi, sorted_idx
 
-    def run(self):
+    def train(self):
         self.logger.info("Ready to run the pipeline:")
         self.pipeline = self._make_pipeline()
         selected_features = self._select_features()
@@ -105,13 +108,28 @@ class Pipeline:
         self._log_pipeline(tuned_pipeline)
         self.logger.info("The pipeline is finished")
 
+    def predict(self):
+        self.logger = logging.getLogger(__name__)
+        self.config = config
+        self.data = data
+
+        self.X, self.y = self.data.test_data
+        self.model_persistent_path = self.config["io"]["model_persistent_path"]
+
+        self.pipeline = self._load_pipeline()
+        # mlflow native model loader
+        # mlflow.sklearn.load_model()
+        pipeline = load(self.model_persistent_path + "pipeline.joblib")
+        predictions = self.pipeline.predict(self.X)
+        return predictions
+
 
 if __name__ == "__main__":
-    from ml.helper.spark_io import SparkReader
+    # from ml.helper.spark_io import SparkReader
 
-    config = Config("./ml/confs/").config
-    spark_reader = SparkReader(config)
-    data = Data(config, spark_reader)
-    pipeline = Pipeline(config, data)
-    pipeline.run()
+    # config = Config("./ml/confs/").config
+    # spark_reader = SparkReader(config)
+    # data = Data(config, spark_reader)
+    # pipeline = Pipeline(config, data)
+    # pipeline.train()
     print("test pass")
