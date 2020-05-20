@@ -121,12 +121,11 @@ class Pipeline:
 
 
 if __name__ == "__main__":
-    # from ml.helper.spark_io import SparkReader
-
-    # config = Config("./ml/confs/").config
-    # spark_reader = SparkReader(config)
-    # data = Data(config, spark_reader)
-    # pipeline = Pipeline(config, data)
-    # pipeline.train()
+    from ml.helper.spark_io import SparkReader
+    config = Config("./ml/confs/").config
+    spark_reader = SparkReader(config)
+    data = Data(config, spark_reader)
+    pipeline = Pipeline(config, data)
+    pipeline.train()
     print("test pass")
 
