@@ -1,6 +1,7 @@
 import featuretools as ft
-from cached_property import cached_property
 import logging
+
+from cached_property import cached_property
 
 
 class Feature:
@@ -9,11 +10,14 @@ class Feature:
     This module will hard-code the feature generation for each use case.
     This module should be used for both train and predict. That's why I put in the pipeline folder
     """
+
     def __init__(self, df):
         self.logger = logging.getLogger(__name__)
         self.df = df
-        fat_content_dict = {'Low Fat':0, 'Regular':1, 'LF':0, 'reg':1, 'low fat':0}
-        self.df['Item_Fat_Content'] = self.df['Item_Fat_Content'].replace(fat_content_dict, regex=True)
+        fat_content_dict = {"Low Fat": 0, "Regular": 1, "LF": 0, "reg": 1, "low fat": 0}
+        self.df["Item_Fat_Content"] = self.df["Item_Fat_Content"].replace(
+            fat_content_dict, regex=True
+        )
         self.df["id"] = self.df["Item_Identifier"] + self.df["Outlet_Identifier"]
         self.df.drop(["Item_Identifier"], axis=1, inplace=True)
         self.df = self.df.dropna(axis=0)
@@ -72,7 +76,7 @@ if __name__ == "__main__":
     config = Config("./ml/confs/").config
     spark_reader = SparkReader(config)
     data = Data(config, spark_reader, train=True)
-    df = data.master_df.toPandas()[: 1000]
+    df = data.master_df.toPandas()[:1000]
     # import ipdb; ipdb.set_trace()
     df_new = Feature(df).feature_matrix
     print(df_new.head())
