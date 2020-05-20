@@ -60,7 +60,7 @@ class Feature:
         )
 
         new_feature_matrix = self._format_feature_matrix(feature_matrix)
-        self.logging.info("Auto feature generation is finished.")
+        self.logger.info("Auto feature generation is finished.")
         return new_feature_matrix
 
 

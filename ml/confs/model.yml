@@ -7,15 +7,25 @@ io:
   predict_data_path: /chjin/Downloads/data/predict
   model_persistent_path: /Users/chjin/Downloads
 
+featuretools:
+  on: True
+
+  features:
+  - feature_1
+  - feature_2
+  - feature_3
+  - feature_4
+
+target:
+  - target_1
+
 mlflow:
   mlflow_experiment_name: "autoML"
   mlflow_tracking_uri: "http://0.0.0.0:5000"
 
-featuretools:
-  on: True
 
 train:
-  random_state: 42
+  randomn_state: 42
   test_size: 0.3
   model_params:
     top_k_features: 10 # auto

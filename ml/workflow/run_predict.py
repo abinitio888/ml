@@ -2,18 +2,23 @@ import pandas as pd
 from pyspark.sql.functions import current_date
 
 from ml.data.data import Data
-from ml.train.features import Features
+from ml.pipeline.feature import Feature
 from ml.helper.config import Config
 from ml.train.pipeline import Pipeline
-from ml.predict.predict import Predict
+from ml.pipeline.train_predict_data import TrainPredictData
 
 @pandas_udf(result_schema, PandasUDFType.GROUPED_MAP)
 def predict(df: pd.DataFrame) -> pd.DataFrame:
     config = Config("./ml/confs/").config
 
-    feature_matrix = Feature(df)
+    ft_on = config["featuretools"]["on"]
+    if ft_on: 
+        feature_matrix = Feature(df).feature_matrix
+        train_predict_data = TrainPredictData(config, df, feature_matrix=feature_matrix)
+    else:
+        train_predict_data = TrainPredictData(config, df, feature_matrix=None)
 
-    pipeline = Predict(config, feature_matrix)
+    pipeline = Pipeline(config, train_predict_data)
     pipeline.predict()
 
     # This is needed for spark to collect the results cross the workers.

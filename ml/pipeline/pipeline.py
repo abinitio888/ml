@@ -19,28 +19,31 @@ import mlflow.sklearn
 
 from ml.data.data import Data
 from ml.helper.config import Config
+from ml.pipeline.train_predict_data import TrainPredictData
+
 
 
 class Pipeline:
     """
-    >>> pipeline = Pipeline(config, df) 
+    >>> pipeline = Pipeline(config, data) 
     >>> pipeline.train()
     or 
     >>> pipeline.predict()
     """
 
-    def __init__(self, config: Config, df: pd.DataFrame):
+    def __init__(self, config: Config, data: TrainPredictData):
         self.logger = logging.getLogger(__name__)
         self.config = config
-        self.df = df 
+        self.data = data 
 
         self.X, self.y = self.data.train_data
-        self.top_k_features = self.config["params"]["top_k_features"]
-        self.param_grid = self.config["params"]["param_grid"]
+        # TODO: needs to be improved
+        self.top_k_features = self.config["train"]["params"]["model_params"]["top_k_features"]
+        self.param_grid = self.config["train"]["params"]["model_params"]["param_grid"]
 
         self.model_persistent_path = self.config["io"]["model_persistent_path"]
-        self.mlflow_experiment_name = self.config["io"]["mlflow_experiment_name"]
-        self.mlflow_tracking_uri = self.config["io"]["mlflow_tracking_uri"]
+        self.mlflow_experiment_name = self.config["mlflow"]["mlflow_experiment_name"]
+        self.mlflow_tracking_uri = self.config["mlflow"]["mlflow_tracking_uri"]
 
     def _make_pipeline(self):
         self.logger.info("Making the pipeline...")
@@ -109,19 +112,12 @@ class Pipeline:
         self.logger.info("The pipeline is finished")
 
     def predict(self):
-        self.logger = logging.getLogger(__name__)
-        self.config = config
-        self.data = data
-
-        self.X, self.y = self.data.test_data
+        self.X = self.data.predict_data
         self.model_persistent_path = self.config["io"]["model_persistent_path"]
 
-        self.pipeline = self._load_pipeline()
-        # mlflow native model loader
-        # mlflow.sklearn.load_model()
-        pipeline = load(self.model_persistent_path + "pipeline.joblib")
-        predictions = self.pipeline.predict(self.X)
-        return predictions
+        pipeline = mlflow.sklearn.load_model(self.model_persistent_path + "pipeline.joblib")
+        pred = pipeline.predict(self.X)
+        return pred
 
 
 if __name__ == "__main__":
@@ -133,3 +129,4 @@ if __name__ == "__main__":
     # pipeline = Pipeline(config, data)
     # pipeline.train()
     print("test pass")
+
