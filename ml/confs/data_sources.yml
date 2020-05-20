@@ -1,43 +1,21 @@
 data_sources:
-  article_datamart:
-    columns:
-      - article_id
-      - gross_price
-      - planning_market_id
-      - product_season_id
-      - index_id
-      - subindex_id
-      - department_id
-      - product_type_id
-    # source: datalake
-    # location: /HDL/PROD/DMA/ALLO_ORDER_DATAMART
-    # extension: parquet 
-    source: local 
-    location: /Users/chjin/Downloads/allo_datamart.csv
-    extension: csv 
-
-  dummy_datamart:
-    columns:
-      - article_id
-      - is_dummy 
-    source: local
-    # location: /use_cases/allo/CHENGJUN/mip/dummy.csv 
-    location: /Users/chjin/Downloads/dummy.csv 
-    extension: csv
-
-  clf_datamart:
-    columns:
-      - x1
-      - x2
-      - x3
-      - x4
-      - y
-    source: local
-    location: /Users/chjin/Downloads/raw_data.csv 
-    extension: csv
+  # article_datamart:
+  #   columns:
+  #     - article_id
+  #     - gross_price
+  #     - planning_market_id
+  #     - product_season_id
+  #     - index_id
+  #     - subindex_id
+  #     - department_id
+  #     - product_type_id
+  #   source: hdl 
+  #   location: /HDL/PROD/DMA/
+  #   extension: parquet 
 
   bigmart_datamart:
     columns:
+      - scenario_id
       - Item_Identifier
       - Item_Weight
       - Item_Fat_Content
@@ -51,5 +29,5 @@ data_sources:
       - Outlet_Type
       - Item_Outlet_Sales
     source: local
-    location: /Users/chjin/Downloads/bigmart.csv 
+    location: /Users/chjin/repos/ml/sample_data/bigmart.csv 
     extension: csv

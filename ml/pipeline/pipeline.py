@@ -5,6 +5,7 @@ from tempfile import mkdtemp
 from typing import List
 import logging
 import numpy as np
+import pandas as pd
 
 from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestClassifier, AdaBoostRegressor
@@ -18,26 +19,31 @@ import mlflow.sklearn
 
 from ml.data.data import Data
 from ml.helper.config import Config
+from ml.pipeline.train_predict_data import TrainPredictData
+
 
 
 class Pipeline:
     """
     >>> pipeline = Pipeline(config, data) 
-    >>> pipeline.run()
+    >>> pipeline.train()
+    or 
+    >>> pipeline.predict()
     """
 
-    def __init__(self, config: Config, data: Data):
+    def __init__(self, config: Config, data: TrainPredictData):
         self.logger = logging.getLogger(__name__)
         self.config = config
-        self.data = data
+        self.data = data 
 
         self.X, self.y = self.data.train_data
-        self.top_k_features = self.config["params"]["top_k_features"]
-        self.param_grid = self.config["params"]["param_grid"]
+        # TODO: needs to be improved
+        self.top_k_features = self.config["train"]["params"]["model_params"]["top_k_features"]
+        self.param_grid = self.config["train"]["params"]["model_params"]["param_grid"]
 
         self.model_persistent_path = self.config["io"]["model_persistent_path"]
-        self.mlflow_experiment_name = self.config["io"]["mlflow_experiment_name"]
-        self.mlflow_tracking_uri = self.config["io"]["mlflow_tracking_uri"]
+        self.mlflow_experiment_name = self.config["mlflow"]["mlflow_experiment_name"]
+        self.mlflow_tracking_uri = self.config["mlflow"]["mlflow_tracking_uri"]
 
     def _make_pipeline(self):
         self.logger.info("Making the pipeline...")
@@ -96,7 +102,7 @@ class Pipeline:
         sorted_fi = fi[sorted_idx]
         return sorted_fi, sorted_idx
 
-    def run(self):
+    def train(self):
         self.logger.info("Ready to run the pipeline:")
         self.pipeline = self._make_pipeline()
         selected_features = self._select_features()
@@ -105,13 +111,22 @@ class Pipeline:
         self._log_pipeline(tuned_pipeline)
         self.logger.info("The pipeline is finished")
 
+    def predict(self):
+        self.X = self.data.predict_data
+        self.model_persistent_path = self.config["io"]["model_persistent_path"]
+
+        pipeline = mlflow.sklearn.load_model(self.model_persistent_path + "pipeline.joblib")
+        pred = pipeline.predict(self.X)
+        return pred
+
 
 if __name__ == "__main__":
-    from ml.helper.spark_io import SparkReader
+    # from ml.helper.spark_io import SparkReader
 
-    config = Config("./ml/confs/").config
-    spark_reader = SparkReader(config)
-    data = Data(config, spark_reader)
-    pipeline = Pipeline(config, data)
-    pipeline.run()
+    # config = Config("./ml/confs/").config
+    # spark_reader = SparkReader(config)
+    # data = Data(config, spark_reader)
+    # pipeline = Pipeline(config, data)
+    # pipeline.train()
     print("test pass")
+

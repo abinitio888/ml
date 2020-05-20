@@ -1,6 +1,6 @@
 import abc
 import logging
-import pyspark.sql as DataFrame
+from pyspark.sql import DataFrame
 
 
 class DataStream:
@@ -24,10 +24,11 @@ class DataStream:
             source=self.source,
             extension=self.extension,
             location=self.location,
-        )
+        )        
+        self.logger.info(f"Data stream: {self.stream_name} is fetched.")
         return df
-
-
+        
+        
 class DataStreams:
     def __init__(self, config, spark_reader):
         self.logger = logging.getLogger(__name__)
