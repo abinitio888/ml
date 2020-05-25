@@ -1,24 +1,28 @@
-
 from cached_property import cached_property
+
 from sklearn.model_selection import train_test_split
+
+from ml.pipeline.feature import Feature
 
 
 class TrainPredictData:
-    def __init__(self, config, df, feature_matrix):
+    def __init__(self, config, df):
         self.config = config
         self.df = df
-        self.feature_matrix = feature_matrix
 
-        self.features = self.config["features"] 
-        self.target = self.config["target"] 
+        self.ft_on = config["featuretools"]["on"]
+        if not self.ft_on:
+            self.features = self.config["features"]
+
+        self.target = self.config["target"]
         self.test_size = self.config["train"]["test_size"]
         self.randomn_state = self.config["train"]["randomn_state"]
 
     @cached_property
     def _train_test_data(self) -> tuple:
         # TODO: check the sorting X and y
-        if self.feature_matrix: 
-            X = self.feature_matrix
+        if self.ft_on:
+            X = Feature(self.df).feature_matrix
         else:
             X = self.df[self.features]
 
@@ -40,4 +44,6 @@ class TrainPredictData:
 
     @cached_property
     def predict_data(self):
+        # if self.ft_on:
+        #     X = Feature(self.df).feature_matrix
         pass
