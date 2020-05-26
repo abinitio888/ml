@@ -1,18 +1,4 @@
 data_sources:
-  # article_datamart:
-  #   columns:
-  #     - article_id
-  #     - gross_price
-  #     - planning_market_id
-  #     - product_season_id
-  #     - index_id
-  #     - subindex_id
-  #     - department_id
-  #     - product_type_id
-  #   source: hdl 
-  #   location: /HDL/PROD/DMA/
-  #   extension: parquet 
-
   bigmart_datamart:
     columns:
       - scenario_id

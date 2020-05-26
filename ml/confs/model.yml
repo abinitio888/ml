@@ -1,7 +1,4 @@
 io:
-  # datalake_url: adl://haaldatalake.azuredatalakestore.net
-  # train_data_path: /use_cases/allo/allo_df/data/train 
-  # predict_data_path: /use_cases/allo/allo_df/data/predict
   datalake_url: /Users 
   train_data_path: /chjin/Downloads/data/train 
   predict_data_path: /chjin/Downloads/data/predict
